@@ -11,7 +11,7 @@
 **10.0.0.1 hadoop01.domain.name**: NameNode DataNode  
 **10.0.0.2 hadoop02.domain.name**: SecondaryNameNode DataNode  
 **10.0.0.3 hadoop03.domain.name**: DataNode  
-**10.0.0.4** dns  
+**10.0.0.4**: DNS   
 mount at **/mnt/hadoop**  
 
 ## IP And Host
