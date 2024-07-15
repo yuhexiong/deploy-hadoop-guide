@@ -160,3 +160,78 @@ sudo chmod -R 777 /mnt/hadoop
 ```
 
 ## Start
+
+### Format NameNode(on hadoop01.domain.name)
+```
+cd $HADOOP_HOME
+bin/hdfs namenode -format
+```
+
+### Start All(on hadoop01.domain.name)
+```
+sbin/start-yarn.sh
+```
+
+## Check Status
+
+### JPS(on each vm)
+```
+jps
+```
+expect by architecture we set
+```
+2132 NameNode
+2265 DataNode
+7546 NodeManager
+9295 Jps
+```
+
+### HDFS(on hadoop01.domain.name)
+```
+hdfs dfsadmin -report
+```
+expect to see three datanodes
+```
+Configured Capacity: 12983532773376 (11.81 TB)
+Present Capacity: 12323766214656 (11.21 TB)
+DFS Remaining: 12323766124544 (11.21 TB)
+DFS Used: 90112 (88 KB)
+DFS Used%: 0.00%
+Replicated Blocks:
+        Under replicated blocks: 0
+        Blocks with corrupt replicas: 0
+        Missing blocks: 0
+        Missing blocks (with replication factor 1): 0
+        Low redundancy blocks with highest priority to recover: 0
+        Pending deletion blocks: 0
+Erasure Coded Block Groups:
+        Low redundancy block groups: 0
+        Block groups with corrupt internal blocks: 0
+        Missing block groups: 0
+        Low redundancy blocks with highest priority to recover: 0
+        Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (3):
+
+Name: 10.0.0.1:9866 (hadoop01.domain.name)
+Hostname: hadoop01.domain.name
+Decommission Status : Normal
+Configured Capacity: 4327844257792 (3.94 TB)
+DFS Used: 339968 (332 KB)
+Non DFS Used: 2154496 (2.05 MB)
+DFS Remaining: 4107922767872 (3.74 TB)
+DFS Used%: 0.00%
+DFS Remaining%: 94.92%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Mon Jul 15 09:28:38 UTC 2024
+Last Block Report: Mon Jul 15 07:58:02 UTC 2024
+Num of Blocks: 34
+
+...
+```
