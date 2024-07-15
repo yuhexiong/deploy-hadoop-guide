@@ -158,6 +158,8 @@ sudo chmod -R 777 /mnt/hadoop
 
 ## Start
 
+copy vm as three and modify hosts  
+
 ### Format NameNode(on hadoop01.domain.name)
 ```
 cd $HADOOP_HOME
