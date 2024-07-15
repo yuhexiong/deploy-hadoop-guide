@@ -25,9 +25,6 @@ refer to [00-installer-config.yaml](./00-installer-config.yaml)
 
 ### Setting Hostname And Hosts
 
-```
-sudo vim /etc/hostname
-```
 modify to hadoop01.domain.name
 
 ```
