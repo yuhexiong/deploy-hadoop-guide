@@ -1,0 +1,35 @@
+<configuration>
+        <!-- NameNode URI -->
+        <property>
+                <name>dfs.namenode.http-address</name>
+                <value>hadoop01.domain.name:50070</value>
+        </property>
+
+        <!-- name dir and data dir -->
+        <property>
+                <name>dfs.namenode.name.dir</name>
+                <value>file:/mnt/hadoop/tmp/dfs/name</value>
+        </property>
+        <property>
+                <name>dfs.datanode.data.dir</name>
+                <value>file:/mnt/hadoop/tmp/dfs/data</value>
+        </property>
+
+        <!-- Secondary NameNode URI -->
+        <property>
+                <name>dfs.namenode.secondary.http-address</name>
+                <value>hadoop02.domain.name:50070</value>
+        </property>
+
+        <!-- Replication Factor -->
+        <property>
+                <name>dfs.replication</name>
+                <value>3</value>
+        </property>
+
+        <!-- Block Size -->
+        <property>
+                <name>dfs.blocksize</name>
+                <value>268435456</value> <!-- 256 MB -->
+        </property>
+</configuration>

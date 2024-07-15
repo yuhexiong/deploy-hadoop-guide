@@ -1,0 +1,11 @@
+<configuration>
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://hadoop01.domain.name:8020</value>
+        </property>
+        <property>
+                <name>hadoop.tmp.dir</name>
+                <value>file:/mnt/hadoop</value>
+                <description>Abase for other temporary directories.</description>
+        </property>
+</configuration>

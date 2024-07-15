@@ -3,22 +3,27 @@
 
 ## Overview
 
-```
-10.0.0.1 hadoop01.domain.name: NameNode DataNode
-10.0.0.2 hadoop02.domain.name: SecondaryNameNode DataNode
-10.0.0.3 hadoop03.domain.name: DataNode
-10.0.0.4 dns
-```
+- Virtual Machine: Ubuntu v22.04.4
+- System: Hadoop v3.3.6
+
+### Architecture
+
+**10.0.0.1 hadoop01.domain.name**: NameNode DataNode  
+**10.0.0.2 hadoop02.domain.name**: SecondaryNameNode DataNode  
+**10.0.0.3 hadoop03.domain.name**: DataNode  
+**10.0.0.4** dns  
+mount at **/mnt/hadoop**  
+
 ## IP And Host
 
-### setting IP
+### Setting IP
 
 ```
 sudo vim /etc/netplan/00-installer-config.yaml
 ```
 refer to [00-installer-config.yaml](./00-installer-config.yaml)
 
-### setting hostname and hosts
+### Setting Hostname And Hosts
 
 ```
 sudo vim /etc/hostname
@@ -35,7 +40,7 @@ modify as below
 10.0.0.3 hadoop03.domain.name
 ```
 
-## hadoop admin
+## Hadoop Admin
 
 ```
 sudo addgroup hadoop_group
@@ -48,7 +53,7 @@ switch to hadoop_admin
 su hadoop_admin
 ```
 
-## SSH key
+## SSH Key
 ```
 su hadoop_admin
 ssh-keygen -t rsa -P ""
@@ -102,4 +107,56 @@ check variable
 echo $HADOOP_HOME
 ```
 
-## Setting HDFS
+## Setting HDFS Config
+
+### CORE
+```
+vim /usr/local/hadoop/etc/hadoop/core-site.xml
+```
+
+refer to [core-site.xml](./core-site.xml)
+
+### HDFS
+
+```
+vim /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+```
+
+refer to [hdfs-site.xml](./hdfs-site.xml)
+
+### Works
+
+```
+sudo vim /usr/local/hadoop/etc/hadoop/workers
+```
+add below
+```
+hadoop01.domain.name
+hadoop02.domain.name
+hadoop03.domain.name
+```
+
+### Environment
+
+```
+sudo vim /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+```
+add below
+```
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+export HDFS_NAMENODE_USER="hadoop_admin"
+export HDFS_DATANODE_USER="hadoop_admin"
+export HDFS_SECONDARYNAMENODE_USER="hadoop_admin"
+export YARN_RESOURCEMANAGER_USER="hadoop_admin"
+export YARN_NODEMANAGER_USER="hadoop_admin"
+```
+
+### Mount Disk
+create file and change mode  
+```
+sudo mkdir /mnt/hadoop
+sudo chmod -R 777 /mnt/hadoop
+```
+
+## Start
