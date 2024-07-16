@@ -1,5 +1,5 @@
 # Deploy Hadoop Guide
-
+Guide for deploying Apache Hadoop in three vitrual machines.  
 
 ## Overview
 
