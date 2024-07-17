@@ -4,6 +4,7 @@ Guide for deploying Apache Hadoop in three vitrual machines.
 ## Overview
 
 - Virtual Machine: Ubuntu v22.04.4
+- Platform: JDK 8
 - System: Hadoop v3.3.6
 
 ### Architecture
