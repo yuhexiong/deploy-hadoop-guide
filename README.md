@@ -1,6 +1,8 @@
 # Deploy Hadoop Guide
 Guide for deploying Apache Hadoop in three vitrual machines.  
 
+![image](hadoop.png)
+
 ## Overview
 
 - Virtual Machine: Ubuntu v22.04.4
