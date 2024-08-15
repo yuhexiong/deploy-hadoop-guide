@@ -11,10 +11,10 @@ Guide for deploying Apache Hadoop in three vitrual machines.
 
 ### Architecture
 
-**10.0.0.1 hadoop01.domain.name**: NameNode DataNode  
-**10.0.0.2 hadoop02.domain.name**: SecondaryNameNode DataNode  
-**10.0.0.3 hadoop03.domain.name**: DataNode  
-**10.0.0.4**: DNS   
+**10.0.0.1 hadoop01**: NameNode DataNode  
+**10.0.0.2 hadoop02**: SecondaryNameNode DataNode  
+**10.0.0.3 hadoop03**: DataNode  
+**10.0.0.4**: DNS(not necessary)   
 mount at **/mnt/hadoop**  
 
 ## IP And Host
@@ -28,16 +28,19 @@ refer to [00-installer-config.yaml](./00-installer-config.yaml)
 
 ### Setting Hostname And Hosts
 
-modify to hadoop01.domain.name
-
 ```
 sudo vim /etc/hostname
 ```
-modify as below
+modify to hadoop01
+
 ```
-10.0.0.1 hadoop01.domain.name
-10.0.0.2 hadoop02.domain.name
-10.0.0.3 hadoop03.domain.name
+sudo vim /etc/hosts
+```
+add below
+```
+10.0.0.1 hadoop01
+10.0.0.2 hadoop02
+10.0.0.3 hadoop03
 ```
 
 ## Hadoop Admin
@@ -45,17 +48,17 @@ modify as below
 ```
 sudo addgroup hadoop_group
 sudo adduser --ingroup hadoop_group hadoop_admin
-usermod -aG sudo hadoop_admin
+sudo usermod -aG sudo hadoop_admin
 ```
 
 switch to hadoop_admin
 ```
 su hadoop_admin
+cd ~
 ```
 
 ## SSH Key
 ```
-su hadoop_admin
 ssh-keygen -t rsa -P ""
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
@@ -69,8 +72,8 @@ sudo apt-get install openjdk-8-jdk
 
 ### Install Hadoop
 use /usr/local/hadoop as HADOOP_HOME
+
 ```
-cd ~
 wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 tar zxvf hadoop-3.3.6.tar.gz
 sudo mv hadoop-3.3.6/ /usr/local/hadoop
@@ -124,16 +127,16 @@ vim /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 
 refer to [hdfs-site.xml](./hdfs-site.xml)
 
-### Works
+### Works(DataNode)
 
 ```
 sudo vim /usr/local/hadoop/etc/hadoop/workers
 ```
 add below
 ```
-hadoop01.domain.name
-hadoop02.domain.name
-hadoop03.domain.name
+hadoop01
+hadoop02
+hadoop03
 ```
 
 ### Environment
@@ -163,15 +166,15 @@ sudo chmod -R 777 /mnt/hadoop
 
 copy vm as three and modify hosts  
 
-### Format NameNode(on hadoop01.domain.name)
+### Format NameNode(on hadoop01)
 ```
 cd $HADOOP_HOME
 bin/hdfs namenode -format
 ```
 
-### Start All(on hadoop01.domain.name)
+### Start All(on hadoop01)
 ```
-sbin/start-yarn.sh
+sbin/start-all.sh
 ```
 
 ## Check Status
@@ -188,7 +191,7 @@ expect by architecture we set
 9295 Jps
 ```
 
-### HDFS(on hadoop01.domain.name)
+### HDFS(on hadoop01)
 ```
 hdfs dfsadmin -report
 ```
@@ -216,8 +219,8 @@ Erasure Coded Block Groups:
 -------------------------------------------------
 Live datanodes (3):
 
-Name: 10.0.0.1:9866 (hadoop01.domain.name)
-Hostname: hadoop01.domain.name
+Name: 10.0.0.1:9866 (hadoop01)
+Hostname: hadoop01
 Decommission Status : Normal
 Configured Capacity: 4327844257792 (3.94 TB)
 DFS Used: 339968 (332 KB)

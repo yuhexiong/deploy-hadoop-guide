@@ -2,7 +2,7 @@
         <!-- NameNode URI -->
         <property>
                 <name>dfs.namenode.http-address</name>
-                <value>hadoop01.domain.name:50070</value>
+                <value>hadoop01:50070</value>
         </property>
 
         <!-- name dir and data dir -->
@@ -18,7 +18,7 @@
         <!-- Secondary NameNode URI -->
         <property>
                 <name>dfs.namenode.secondary.http-address</name>
-                <value>hadoop02.domain.name:50070</value>
+                <value>hadoop02:50070</value>
         </property>
 
         <!-- Replication Factor -->
