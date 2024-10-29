@@ -43,6 +43,11 @@ add below
 10.0.0.3 hadoop03
 ```
 
+reboot vm after setting
+```
+sudo reboot
+```
+
 ## Hadoop Admin
 
 ```
