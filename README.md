@@ -21,20 +21,21 @@ mount at **/mnt/hadoop**
 
 ### Setting IP
 
-```
+```bash
 sudo vim /etc/netplan/00-installer-config.yaml
 ```
 refer to [00-installer-config.yaml](./00-installer-config.yaml)
 
 ### Setting Hostname And Hosts
 
-```
+```bash
 sudo vim /etc/hostname
 ```
 modify to hadoop01
 
-```
+```bash
 sudo vim /etc/hosts
+
 ```
 add below
 ```
@@ -44,48 +45,51 @@ add below
 ```
 
 reboot vm after setting
-```
+```bash
 sudo reboot
 ```
 
 ## Hadoop Admin
 
-```
+```bash
 sudo addgroup hadoop_group
 sudo adduser --ingroup hadoop_group hadoop_admin
 sudo usermod -aG sudo hadoop_admin
 ```
 
 switch to hadoop_admin
-```
+```bash
 su hadoop_admin
 cd ~
 ```
 
 ## SSH Key
-```
+```bash
 ssh-keygen -t rsa -P ""
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
 ```
 
 ## Install Java And Hadoop
+```bash
+sudo apt-get update
+```
 
 ### Java
-```
+```bash
 sudo apt-get install openjdk-8-jdk
 ```
 
 ### Install Hadoop
 use /usr/local/hadoop as HADOOP_HOME
 
-```
+```bash
 wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 tar zxvf hadoop-3.3.6.tar.gz
 sudo mv hadoop-3.3.6/ /usr/local/hadoop
 ```
 
 ### Environment
-```
+```bash
 vim ~/.bashrc
 ```
 add below
@@ -106,37 +110,48 @@ export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
 ```
 
 make environment variables effective
-```
+```bash
 source ~/.bashrc
 ```
 
 check variable
-```
+```bash
 echo $HADOOP_HOME
 ```
 
 ## Setting HDFS Config
 
 ### CORE
-```
+```bash
 vim /usr/local/hadoop/etc/hadoop/core-site.xml
 ```
 
-refer to [core-site.xml](./core-site.xml)
+refer to [core-site.xml](./core-site.xml)  
+
+setting
+- fs.defaultFS at hadoop01
+- hadoop.tmp.dir at `/mnt/hadoop`, if error exists you can delete this dir and restart.  
+
 
 ### HDFS
 
-```
+```bash
 vim /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 ```
 
 refer to [hdfs-site.xml](./hdfs-site.xml)
 
+setting
+- namenode at hadoop01
+- namenode and datanode tmp.dir at `/mnt/hadoop`, if error exists you can delete this dir and restart.  
+- secondary at hadoop02
+
 ### Works(DataNode)
 
-```
+```bash
 sudo vim /usr/local/hadoop/etc/hadoop/workers
 ```
+
 add below
 ```
 hadoop01
@@ -146,9 +161,10 @@ hadoop03
 
 ### Environment
 
-```
+```bash
 sudo vim /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 ```
+
 add below
 ```
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -162,32 +178,33 @@ export YARN_NODEMANAGER_USER="hadoop_admin"
 
 ### Mount Disk
 create file and change mode  
-```
-sudo mkdir /mnt/hadoop
+```bash
+sudo mkdir -p /mnt/hadoop
 sudo chmod -R 777 /mnt/hadoop
 ```
 
 ## Start
 
-copy vm as three and modify hosts  
+copy vm as three and modify ip and hostname, **no other settings need to be adjusted**.  
 
 ### Format NameNode(on hadoop01)
-```
+```bash
 cd $HADOOP_HOME
 bin/hdfs namenode -format
 ```
 
 ### Start All(on hadoop01)
-```
+```bash
 sbin/start-all.sh
 ```
 
 ## Check Status
 
 ### JPS(on each vm)
-```
+```bash
 jps
 ```
+
 expect by architecture we set
 ```
 2132 NameNode
@@ -197,9 +214,10 @@ expect by architecture we set
 ```
 
 ### HDFS(on hadoop01)
-```
+```bash
 hdfs dfsadmin -report
 ```
+
 expect to see three datanodes
 ```
 Configured Capacity: 12983532773376 (11.81 TB)
