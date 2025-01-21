@@ -1,102 +1,98 @@
-# Deploy Hadoop Guide
-
-**(also provided Traditional Chinese version document [README-CH.md](README-CH.md).)**
-
-
-Guide for deploying Apache Hadoop in three vitrual machines.  
+# Deploy Hadoop Guide  
+在三台虛擬機上部署 Apache Hadoop 的指南。  
 
 ![image](hadoop.png)
 
-## Overview
+## Overview  
 
-- Virtual Machine: Ubuntu v22.04.4
-- Platform: JDK 8
-- System: Hadoop v3.3.6
+- 虛擬機：Ubuntu v22.04.4  
+- 平台：JDK 8  
+- 系統：Hadoop v3.3.6  
 
-### Architecture
+### Architecture  
 
-**10.0.0.1 hadoop01**: NameNode DataNode  
-**10.0.0.2 hadoop02**: SecondaryNameNode DataNode  
-**10.0.0.3 hadoop03**: DataNode  
-**10.0.0.4**: DNS(not necessary)   
-mount at **/mnt/hadoop**  
+**10.0.0.1 hadoop01**：NameNode DataNode  
+**10.0.0.2 hadoop02**：SecondaryNameNode DataNode  
+**10.0.0.3 hadoop03**：DataNode  
+**10.0.0.4**：DNS（非必要）  
+掛載於 **/mnt/hadoop**  
 
-## IP And Host
+## IP And Host  
 
-### Setting IP
+### 設定 IP  
 
 ```bash
 sudo vim /etc/netplan/00-installer-config.yaml
-```
-refer to [00-installer-config.yaml](./00-installer-config.yaml)
+```  
+參考 [00-installer-config.yaml](./00-installer-config.yaml)  
 
-### Setting Hostname And Hosts
+### 設定 Hostname 和 Hosts  
 
 ```bash
 sudo vim /etc/hostname
-```
-modify to hadoop01
+```  
+修改為 hadoop01  
 
 ```bash
 sudo vim /etc/hosts
-
-```
-add below
+```  
+新增以下內容  
 ```
 10.0.0.1 hadoop01
 10.0.0.2 hadoop02
 10.0.0.3 hadoop03
-```
+```  
 
-reboot vm after setting
+設定完成後重新啟動虛擬機  
 ```bash
 sudo reboot
-```
+```  
 
-## Hadoop Admin
+## Hadoop Admin  
 
 ```bash
 sudo addgroup hadoop_group
 sudo adduser --ingroup hadoop_group hadoop_admin
 sudo usermod -aG sudo hadoop_admin
-```
+```  
 
-switch to hadoop_admin
+切換到 hadoop_admin  
 ```bash
 su hadoop_admin
 cd ~
-```
+```  
 
-## SSH Key
+## SSH Key  
 ```bash
 ssh-keygen -t rsa -P ""
 cat ~/.ssh/id_rsa.pub > ~/.ssh/authorized_keys
-```
+```  
 
-## Install Java And Hadoop
+## 安裝 Java 和 Hadoop  
+
 ```bash
 sudo apt-get update
-```
+```  
 
-### Java
+### Java  
 ```bash
 sudo apt-get install openjdk-8-jdk
-```
+```  
 
-### Install Hadoop
-use /usr/local/hadoop as HADOOP_HOME
+### 安裝 Hadoop  
+使用 `/usr/local/hadoop` 作為 HADOOP_HOME  
 
 ```bash
 wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 tar zxvf hadoop-3.3.6.tar.gz
 sudo mv hadoop-3.3.6/ /usr/local/hadoop
-```
+```  
 
-### Environment
+### 環境變數  
 ```bash
 vim ~/.bashrc
-```
-add below
+```  
+新增以下內容  
 ```
 export HADOOP_HOME=/usr/local/hadoop
 
@@ -111,65 +107,60 @@ export HADOOP_OPTS="$HADOOP_OPTS -Djava.library.path=$HADOOP_HOME/lib/native"
 
 export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
-```
+```  
 
-make environment variables effective
+使環境變數生效  
 ```bash
 source ~/.bashrc
-```
+```  
 
-check variable
+檢查變數  
 ```bash
 echo $HADOOP_HOME
-```
+```  
 
-## Setting HDFS Config
+## 設定 HDFS 配置  
 
-### CORE
+### CORE  
 ```bash
 vim /usr/local/hadoop/etc/hadoop/core-site.xml
-```
+```  
+參考 [core-site.xml](./core-site.xml)  
 
-refer to [core-site.xml](./core-site.xml)  
+設定：  
+- fs.defaultFS 指向 hadoop01  
+- hadoop.tmp.dir 設為 `/mnt/hadoop`，若出現錯誤，可以刪除此目錄並重啟。  
 
-setting
-- fs.defaultFS at hadoop01
-- hadoop.tmp.dir at `/mnt/hadoop`, if error exists you can delete this dir and restart.  
-
-
-### HDFS
+### HDFS  
 
 ```bash
 vim /usr/local/hadoop/etc/hadoop/hdfs-site.xml
-```
+```  
+參考 [hdfs-site.xml](./hdfs-site.xml)  
 
-refer to [hdfs-site.xml](./hdfs-site.xml)
+設定：  
+- NameNode 指向 hadoop01  
+- NameNode 和 DataNode 的 tmp.dir 設為 `/mnt/hadoop`，若出現錯誤，可以刪除此目錄並重啟。  
+- SecondaryNameNode 指向 hadoop02  
 
-setting
-- namenode at hadoop01
-- namenode and datanode tmp.dir at `/mnt/hadoop`, if error exists you can delete this dir and restart.  
-- secondary at hadoop02
-
-### Works(DataNode)
+### Workers（DataNode）  
 
 ```bash
 sudo vim /usr/local/hadoop/etc/hadoop/workers
-```
-
-add below
+```  
+新增以下內容  
 ```
 hadoop01
 hadoop02
 hadoop03
-```
+```  
 
-### Environment
+### Environment  
 
 ```bash
 sudo vim /usr/local/hadoop/etc/hadoop/hadoop-env.sh
-```
-
-add below
+```  
+新增以下內容  
 ```
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
@@ -178,51 +169,49 @@ export HDFS_DATANODE_USER="hadoop_admin"
 export HDFS_SECONDARYNAMENODE_USER="hadoop_admin"
 export YARN_RESOURCEMANAGER_USER="hadoop_admin"
 export YARN_NODEMANAGER_USER="hadoop_admin"
-```
+```  
 
-### Mount Disk
-create file and change mode  
+### 掛載磁碟  
+建立目錄並更改權限  
 ```bash
 sudo mkdir -p /mnt/hadoop
 sudo chmod -R 777 /mnt/hadoop
-```
+```  
 
-## Start
+## 啟動  
 
-copy vm as three and modify ip and hostname, **no other settings need to be adjusted**.  
+將虛擬機複製為三份並修改 IP 和 Hostname，**不需要其他設定調整**。  
 
-### Format NameNode(on hadoop01)
+### 格式化 NameNode（在 hadoop01 執行）  
 ```bash
 cd $HADOOP_HOME
 bin/hdfs namenode -format
-```
+```  
 
-### Start All(on hadoop01)
+### 啟動所有服務（在 hadoop01 執行）  
 ```bash
 sbin/start-all.sh
-```
+```  
 
-## Check Status
+## 狀態檢查  
 
-### JPS(on each vm)
+### JPS（每台虛擬機執行）  
 ```bash
 jps
-```
-
-expect by architecture we set
+```  
+依我們的架構設定，應預期如下結果  
 ```
 2132 NameNode
 2265 DataNode
 7546 NodeManager
 9295 Jps
-```
+```  
 
-### HDFS(on hadoop01)
+### HDFS（在 hadoop01 執行）  
 ```bash
 hdfs dfsadmin -report
-```
-
-expect to see three datanodes
+```  
+預期看到三個 DataNode，如下所示  
 ```
 Configured Capacity: 12983532773376 (11.81 TB)
 Present Capacity: 12323766214656 (11.21 TB)
@@ -266,4 +255,4 @@ Last Block Report: Mon Jul 15 07:58:02 UTC 2024
 Num of Blocks: 34
 
 ...
-```
+```  
